@@ -35,10 +35,7 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-## 🔗 Live Demo
 
-**Website**: [madrasah-nusantara.vercel.app](https://madrasah-nusantara.vercel.app)
-**Admin**: [madrasah-nusantara.vercel.app/admin](https://madrasah-nusantara.vercel.app/admin)
 
 ## 📸 Screenshots
 
