@@ -53,11 +53,12 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="badge badge-info">{{ $org->type }}</span></td>
+                            <td><span class="badge bg-info">{{ $org->type }}</span></td>
                             <td>
-                                @if($org->tags)
-                                    @foreach($org->tags as $tag)
-                                        <span class="badge badge-light border me-1 mb-1">{{ $tag }}</span>
+                                @php $tags = is_array($org->tags) ? $org->tags : (empty($org->tags) ? [] : (array)$org->tags); @endphp
+                                @if(count($tags) > 0)
+                                    @foreach($tags as $tag)
+                                        <span class="badge bg-light text-dark border me-1 mb-1">{{ $tag }}</span>
                                     @endforeach
                                 @else
                                     <span class="text-muted">-</span>
@@ -65,23 +66,39 @@
                             </td>
                             <td>
                                 @if($org->is_active)
-                                    <span class="badge badge-success">Active</span>
+                                    <span class="badge bg-success">Active</span>
                                 @else
-                                    <span class="badge badge-secondary">Inactive</span>
+                                    <span class="badge bg-secondary">Inactive</span>
                                 @endif
                             </td>
                             <td>{{ $org->order ?? 0 }}</td>
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.organizations.edit', $org) }}" class="btn btn-sm btn-outline-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.organizations.destroy', $org) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this organization?')">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('organisasi.show', $org) }}" title="View Public">
+                                                <i class="fas fa-eye me-2"></i>View
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.organizations.edit', $org) }}" title="Edit">
+                                                <i class="fas fa-edit me-2"></i>Edit
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form action="{{ route('admin.organizations.destroy', $org) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this organization?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="dropdown-item text-danger" title="Delete">
+                                                    <i class="fas fa-trash me-2"></i>Delete
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
                                 </div>
                             </td>
                         </tr>

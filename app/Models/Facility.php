@@ -7,15 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class Facility extends Model
 {
     protected $fillable = [
+        'name',
         'icon',
-        'title',
+        'image',
         'description',
+        'category',
+        'capacity',
+        'location',
+        'status',
+        'features',
+        'contact_person',
+        'operating_hours',
         'order',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'features' => 'array',
+        'capacity' => 'integer',
+        'order' => 'integer',
     ];
 
     public function scopeActive($query)

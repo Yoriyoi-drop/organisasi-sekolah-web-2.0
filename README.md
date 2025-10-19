@@ -37,18 +37,18 @@ php artisan serve
 
 ## 🔗 Live Demo
 
-**Website**: https://madrasah-nusantara.vercel.app
-**Admin**: https://madrasah-nusantara.vercel.app/admin
+**Website**: [madrasah-nusantara.vercel.app](https://madrasah-nusantara.vercel.app)
+**Admin**: [madrasah-nusantara.vercel.app/admin](https://madrasah-nusantara.vercel.app/admin)
 
 ## 📸 Screenshots
 
 ### Desktop
-![Contact Page](screenshots/contact-desktop.png)
-![Password Verification](screenshots/password-desktop.png)
+![Contact Page]
+![Password Verification]
 
 ### Mobile
-![Contact Mobile](screenshots/contact-mobile.png)
-![Password Mobile](screenshots/password-mobile.png)
+![Contact Mobile]
+![Password Mobile]
 
 ## 🛠️ Tech Stack
 
@@ -56,6 +56,15 @@ php artisan serve
 - **Frontend**: Bootstrap 5, Font Awesome
 - **Database**: SQLite/MySQL
 - **Deployment**: Vercel/Netlify ready
+
+## 📝 Updates & Fixes
+
+- **Bugfix**: Resolved error `View [pages.fasilitas-detail] not found`.
+  - Added view file: `resources/views/pages/fasilitas-detail.blade.php` used by `FacilityController@show()`.
+  - The page shows facility details (image, category, capacity, status, location, description) and related facilities.
+- **Added**: Facilities detail UI with related items list and back navigation to `route('fasilitas')`.
+- **Migration filenames updated**: Renamed all `database/migrations/` files starting with `2024_` to `2025_` to align the migration timeline. No PHP class contents changed.
+- **Post-update note**: If needed, run `php artisan migrate` (or `php artisan migrate:refresh` if you want to re-run all migrations in a dev environment).
 
 ## 📧 Contact
 

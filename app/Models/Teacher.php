@@ -5,5 +5,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends Model
 {
-    // placeholder
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'subject',
+        'qualification',
+    ];
+
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class, 'organization_teacher')->withPivot('role')->withTimestamps();
+    }
 }

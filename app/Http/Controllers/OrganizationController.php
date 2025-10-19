@@ -15,6 +15,12 @@ class OrganizationController extends Controller
                              ->get();
         });
         
-        return view('pages.organisasi', compact('organizations'));
+        return view('organisasi.index', compact('organizations'));
+    }
+
+    public function show($id)
+    {
+        $organization = Organization::with(['students', 'teachers'])->findOrFail($id);
+        return view('organisasi.show', compact('organization'));
     }
 }

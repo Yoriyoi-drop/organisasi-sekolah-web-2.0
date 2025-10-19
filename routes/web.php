@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 Route::get('/organisasi', [OrganizationController::class, 'index'])->name('organisasi');
+Route::get('/organisasi/{id}', [OrganizationController::class, 'show'])->whereNumber('id')->name('organisasi.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/kegiatan', [ActivityController::class, 'index'])->name('kegiatan');
 Route::get('/fasilitas', [\App\Http\Controllers\FacilityController::class, 'index'])->name('fasilitas');
@@ -34,6 +35,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/request-password-change', [\App\Http\Controllers\ProfileController::class, 'requestPasswordChange'])->name('profile.request-password-change');
     Route::get('/profile/verify-password', [\App\Http\Controllers\ProfileController::class, 'showVerifyPassword'])->name('profile.verify-password');
     Route::post('/profile/verify-password', [\App\Http\Controllers\ProfileController::class, 'verifyPasswordChange']);
+
+    // Profile password routes 
+    Route::get('/profile/password', [\App\Http\Controllers\ProfileController::class, 'editPassword'])->name('profile.password.edit');
+    Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('/profile/password/code', [\App\Http\Controllers\ProfileController::class, 'sendPasswordCode'])->name('profile.password.code');
     
     // 2FA routes
     Route::get('/2fa', [\App\Http\Controllers\TwoFactorController::class, 'show'])->name('2fa.show');

@@ -37,4 +37,14 @@ class Organization extends Model
     {
         return $query->orderBy('order')->orderBy('name');
     }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'organization_student')->withTimestamps();
+    }
+
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'organization_teacher')->withPivot('role')->withTimestamps();
+    }
 }

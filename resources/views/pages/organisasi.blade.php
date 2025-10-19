@@ -96,9 +96,14 @@
                                     </div>
                                     @endif
                                 </div>
-                                <a href="{{ route('registration.show', $org) }}" class="btn btn-{{ $org->color }} w-100 mt-3">
-                                    <i class="bi bi-person-plus me-2"></i>Bergabung
-                                </a>
+                                <div class="d-grid gap-2 mt-3">
+                                    <a href="{{ route('organisasi.show', $org) }}" class="btn btn-outline-{{ $org->color }}">
+                                        <i class="bi bi-arrow-right-circle me-2"></i>Selengkapnya
+                                    </a>
+                                    <a href="{{ route('registration.show', $org) }}" class="btn btn-{{ $org->color }}">
+                                        <i class="bi bi-person-plus me-2"></i>Bergabung
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

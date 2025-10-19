@@ -22,7 +22,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        
+
         // Log profile view (with error handling)
         try {
             if (class_exists('App\Services\SecurityService')) {
@@ -32,14 +32,14 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             \Log::warning('SecurityService error in profile show: ' . $e->getMessage());
         }
-        
+
         $recentLogs = [];
         try {
             $recentLogs = $user->securityLogs()->latest()->take(5)->get();
         } catch (\Exception $e) {
             \Log::warning('Failed to load security logs: ' . $e->getMessage());
         }
-        
+
         return view('profile.show', [
             'user' => $user,
             'recentLogs' => $recentLogs
@@ -49,7 +49,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        
+
         // Security validation (with error handling)
         try {
             if (class_exists('App\Services\SecurityService')) {
@@ -63,7 +63,7 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             \Log::warning('SecurityService error in profile edit: ' . $e->getMessage());
         }
-        
+
         return view('profile.edit', [
             'user' => $user
         ]);
@@ -73,7 +73,7 @@ class ProfileController extends Controller
     {
         try {
             $key = 'password-change-request:' . $request->ip();
-            
+
             if (RateLimiter::tooManyAttempts($key, 3)) {
                 $seconds = RateLimiter::availableIn($key);
                 if (class_exists('App\Services\SecurityService')) {
@@ -88,7 +88,7 @@ class ProfileController extends Controller
             ]);
 
             $user = Auth::user();
-            
+
             if (!Hash::check($request->current_password, $user->password)) {
                 RateLimiter::hit($key, 300);
                 if (class_exists('App\Services\SecurityService')) {
@@ -98,16 +98,16 @@ class ProfileController extends Controller
             }
 
             // Check password strength
-            if (!$this->isStrongPassword($request->password)) {
+            if (class_exists('App\Services\SecurityService') && !SecurityService::isStrongPassword($request->password)) {
                 return back()->withErrors(['password' => 'Password harus mengandung huruf besar, kecil, angka, dan simbol.']);
             }
 
             // Generate verification code
             $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            
+
             // Delete old codes
             PasswordVerificationCode::where('user_id', $user->id)->where('used', false)->delete();
-            
+
             // Create new code
             PasswordVerificationCode::create([
                 'user_id' => $user->id,
@@ -123,7 +123,7 @@ class ProfileController extends Controller
                 \Log::error('Failed to send password verification email: ' . $e->getMessage());
                 return back()->withErrors(['email' => 'Gagal mengirim email verifikasi. Silakan coba lagi.']);
             }
-            
+
             session([
                 'password_change_data' => [
                     'password' => Hash::make($request->password),
@@ -134,9 +134,9 @@ class ProfileController extends Controller
             if (class_exists('App\Services\SecurityService')) {
                 SecurityService::logActivity('password_change_requested', [], 'medium');
             }
-            
+
             return redirect()->route('profile.verify-password')->with('success', 'Kode verifikasi telah dikirim ke email Anda.');
-            
+
         } catch (\Exception $e) {
             \Log::error('Password change request error: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan. Silakan coba lagi.']);
@@ -148,7 +148,7 @@ class ProfileController extends Controller
         if (!session('password_change_data')) {
             return redirect()->route('profile.edit')->withErrors(['error' => 'Sesi tidak valid.']);
         }
-        
+
         return view('profile.verify-password');
     }
 
@@ -156,7 +156,7 @@ class ProfileController extends Controller
     {
         try {
             $key = 'password-verify:' . $request->ip();
-            
+
             if (RateLimiter::tooManyAttempts($key, 5)) {
                 $seconds = RateLimiter::availableIn($key);
                 if (class_exists('App\Services\SecurityService')) {
@@ -171,7 +171,7 @@ class ProfileController extends Controller
 
             $user = Auth::user();
             $passwordData = session('password_change_data');
-            
+
             if (!$passwordData || (time() - $passwordData['timestamp']) > 600) {
                 if (class_exists('App\Services\SecurityService')) {
                     SecurityService::logActivity('password_change_session_expired', [], 'medium');
@@ -194,19 +194,19 @@ class ProfileController extends Controller
 
             // Update password
             $user->update(['password' => $passwordData['password']]);
-            
+
             // Mark code as used
             $verificationCode->update(['used' => true]);
-            
+
             // Clear session
             session()->forget('password_change_data');
-            
+
             if (class_exists('App\Services\SecurityService')) {
                 SecurityService::logActivity('password_changed_successfully', [], 'medium');
             }
-            
+
             return redirect()->route('profile.show')->with('success', 'Password berhasil diubah.');
-            
+
         } catch (\Exception $e) {
             \Log::error('Password verification error: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan. Silakan coba lagi.']);
@@ -216,14 +216,14 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $key = 'profile-update:' . $request->ip();
-        
+
         if (RateLimiter::tooManyAttempts($key, 10)) {
             $seconds = RateLimiter::availableIn($key);
             return back()->withErrors(['rate_limit' => "Terlalu banyak percobaan. Coba lagi dalam {$seconds} detik."]);
         }
 
         $user = Auth::user();
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
@@ -265,7 +265,7 @@ class ProfileController extends Controller
                 $changes[$field] = ['old' => $user->$field, 'new' => $request->$field];
             }
         }
-        
+
         if (!empty($changes)) {
             SecurityService::logActivity('profile_updated', $changes, 'low');
         }
@@ -274,8 +274,128 @@ class ProfileController extends Controller
         return redirect()->route('profile.show')->with('success', 'Profile berhasil diperbarui.');
     }
 
-    private function isStrongPassword(string $password): bool
+    public function editPassword()
     {
-        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/', $password);
+        return view('profile.password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'channel' => ['required', 'in:email,phone'],
+            'email' => ['required_if:channel,email', 'email'],
+            'phone' => ['required_if:channel,phone', 'string'],
+            'code' => ['required', 'string', 'size:6'],
+            'current_password' => ['required'],
+            'new_password' => ['required', 'min:8', 'confirmed'],
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->channel === 'email') {
+            if (strcasecmp($request->email, $user->email) !== 0) {
+                return back()->withErrors(['email' => 'Email tidak sesuai dengan akun yang sedang login.'])->withInput();
+            }
+        } else {
+            // phone channel
+            $userPhone = $user->phone ?? '';
+            if (empty($userPhone)) {
+                return back()->withErrors(['phone' => 'Nomor telepon belum terdaftar pada akun.'])->withInput();
+            }
+            if (trim($request->phone) !== trim($userPhone)) {
+                return back()->withErrors(['phone' => 'Nomor telepon tidak sesuai dengan akun yang sedang login.'])->withInput();
+            }
+        }
+
+        // Verify OTP code
+        $verificationCode = PasswordVerificationCode::where('user_id', $user->id)
+            ->where('code', $request->code)
+            ->where('used', false)
+            ->first();
+
+        if (!$verificationCode || $verificationCode->isExpired()) {
+            return back()->withErrors(['code' => 'Kode verifikasi tidak valid atau telah kedaluwarsa.'])->withInput();
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password saat ini tidak benar.'])->withInput();
+        }
+
+        $user->update(['password' => Hash::make($request->new_password)]);
+
+        // Mark code as used
+        $verificationCode->update(['used' => true]);
+
+        return redirect()->route('profile.password.edit')->with('success', 'Password berhasil diperbarui.');
+    }
+
+    public function sendPasswordCode(Request $request)
+    {
+        $request->validate([
+            'channel' => ['required', 'in:email,phone'],
+            'email' => ['required_if:channel,email', 'email'],
+            'phone' => ['required_if:channel,phone', 'string'],
+        ]);
+
+        $user = Auth::user();
+
+        // Rate limiting by channel + user
+        $rateKey = 'password-code:' . $user->id . ':' . $request->channel;
+        if (RateLimiter::tooManyAttempts($rateKey, 3)) {
+            $seconds = RateLimiter::availableIn($rateKey);
+            return response()->json(['message' => "Terlalu banyak permintaan. Coba lagi dalam {$seconds} detik."], 429);
+        }
+
+        try {
+            // Generate and store code
+            $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            PasswordVerificationCode::where('user_id', $user->id)->where('used', false)->delete();
+            PasswordVerificationCode::create([
+                'user_id' => $user->id,
+                'code' => $code,
+                'expires_at' => Carbon::now()->addMinutes(10),
+                'ip_address' => $request->ip(),
+            ]);
+
+            if ($request->channel === 'email') {
+                // Validate email matches current user
+                if (strcasecmp($request->email, $user->email) !== 0) {
+                    return response()->json(['message' => 'Email tidak sesuai dengan akun yang sedang login.'], 422);
+                }
+                // Send email
+                Mail::to($user->email)->send(new PasswordVerificationCodeMail($code, $user->name));
+            } else {
+                // phone channel via Twilio (SMS). Ensure env is configured and package installed.
+                $userPhone = $user->phone ?? '';
+                if (empty($userPhone)) {
+                    return response()->json(['message' => 'Nomor telepon belum terdaftar pada akun.'], 422);
+                }
+                if (trim($request->phone) !== trim($userPhone)) {
+                    return response()->json(['message' => 'Nomor telepon tidak sesuai dengan akun yang sedang login.'], 422);
+                }
+                $sid = env('TWILIO_SID');
+                $token = env('TWILIO_TOKEN');
+                $from = env('TWILIO_FROM'); // E.164 format
+                if (!$sid || !$token || !$from) {
+                    return response()->json(['message' => 'Konfigurasi Twilio belum lengkap.'], 500);
+                }
+                try {
+                    $client = new \Twilio\Rest\Client($sid, $token);
+                    $client->messages->create($userPhone, [
+                        'from' => $from,
+                        'body' => "Kode verifikasi Anda: {$code} (berlaku 10 menit)",
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::error('Twilio SMS error: ' . $e->getMessage());
+                    return response()->json(['message' => 'Gagal mengirim SMS. Silakan coba lagi.'], 500);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send password code: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal mengirim kode verifikasi. Coba lagi nanti.'], 500);
+        }
+
+        RateLimiter::hit($rateKey, 60);
+        return response()->json(['message' => 'Kode verifikasi telah dikirim ke ' . ($request->channel === 'email' ? 'email' : 'telepon') . '.']);
     }
 }

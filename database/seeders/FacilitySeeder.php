@@ -12,6 +12,7 @@ class FacilitySeeder extends Seeder
         $facilities = [
             [
                 'name' => 'Masjid Al-Hikmah',
+                'icon' => 'bi-mosque',
                 'description' => 'Masjid utama madrasah dengan kapasitas besar untuk sholat berjamaah, kajian keagamaan, dan kegiatan spiritual lainnya.',
                 'category' => 'Masjid',
                 'capacity' => 500,
@@ -23,6 +24,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Perpustakaan Maktabah',
+                'icon' => 'bi-book-half',
                 'description' => 'Perpustakaan lengkap dengan koleksi buku agama, umum, dan digital untuk mendukung pembelajaran siswa.',
                 'category' => 'Perpustakaan',
                 'capacity' => 100,
@@ -34,6 +36,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Laboratorium IPA',
+                'icon' => 'bi-flask',
                 'description' => 'Laboratorium lengkap untuk praktikum Fisika, Kimia, dan Biologi dengan peralatan modern.',
                 'category' => 'Laboratorium',
                 'capacity' => 40,
@@ -45,6 +48,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Laboratorium Komputer',
+                'icon' => 'bi-pc-display',
                 'description' => 'Lab komputer dengan 30 unit PC untuk pembelajaran TIK dan multimedia.',
                 'category' => 'Laboratorium',
                 'capacity' => 30,
@@ -56,6 +60,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Aula Serbaguna',
+                'icon' => 'bi-building',
                 'description' => 'Ruang serbaguna untuk acara besar, seminar, dan kegiatan sekolah lainnya.',
                 'category' => 'Ruang Kelas',
                 'capacity' => 300,
@@ -67,6 +72,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Lapangan Olahraga',
+                'icon' => 'bi-dribbble',
                 'description' => 'Lapangan multifungsi untuk berbagai cabang olahraga dan kegiatan fisik.',
                 'category' => 'Olahraga',
                 'capacity' => 200,
@@ -78,6 +84,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Kantin Sehat',
+                'icon' => 'bi-cup-straw',
                 'description' => 'Kantin sekolah yang menyediakan makanan dan minuman sehat untuk siswa dan guru.',
                 'category' => 'Kantin',
                 'capacity' => 80,
@@ -89,6 +96,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Asrama Putra',
+                'icon' => 'bi-house-door-fill',
                 'description' => 'Asrama untuk siswa putra dengan fasilitas lengkap dan nyaman.',
                 'category' => 'Asrama',
                 'capacity' => 120,
@@ -100,6 +108,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Asrama Putri',
+                'icon' => 'bi-house-heart-fill',
                 'description' => 'Asrama untuk siswa putri dengan pengawasan ketat dan fasilitas memadai.',
                 'category' => 'Asrama',
                 'capacity' => 100,
@@ -111,6 +120,7 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Ruang UKS',
+                'icon' => 'bi-heart-pulse-fill',
                 'description' => 'Unit Kesehatan Sekolah untuk pertolongan pertama dan pemeriksaan kesehatan.',
                 'category' => 'Lainnya',
                 'capacity' => 10,

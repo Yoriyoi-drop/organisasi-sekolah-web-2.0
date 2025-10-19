@@ -22,7 +22,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">Nama Lengkap *</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
                                        id="name" name="name" value="{{ old('name', $user->name) }}" required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -30,7 +30,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="email" class="form-label">Email *</label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
                                        id="email" name="email" value="{{ old('email', $user->email) }}" required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -38,7 +38,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label">Nomor Telepon</label>
-                                <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
+                                <input type="tel" class="form-control @error('phone') is-invalid @enderror"
                                        id="phone" name="phone" value="{{ old('phone', $user->phone) }}">
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="birth_date" class="form-label">Tanggal Lahir</label>
-                                <input type="date" class="form-control @error('birth_date') is-invalid @enderror" 
+                                <input type="date" class="form-control @error('birth_date') is-invalid @enderror"
                                        id="birth_date" name="birth_date" value="{{ old('birth_date', $user->birth_date?->format('Y-m-d')) }}">
                                 @error('birth_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="department" class="form-label">Departemen</label>
-                                <input type="text" class="form-control @error('department') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('department') is-invalid @enderror"
                                        id="department" name="department" value="{{ old('department', $user->department) }}">
                                 @error('department')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="position" class="form-label">Posisi/Jabatan</label>
-                                <input type="text" class="form-control @error('position') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('position') is-invalid @enderror"
                                        id="position" name="position" value="{{ old('position', $user->position) }}">
                                 @error('position')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="address" class="form-label">Alamat</label>
-                                <textarea class="form-control @error('address') is-invalid @enderror" 
+                                <textarea class="form-control @error('address') is-invalid @enderror"
                                           id="address" name="address" rows="3">{{ old('address', $user->address) }}</textarea>
                                 @error('address')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -89,8 +89,8 @@
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="bio" class="form-label">Bio/Deskripsi Diri</label>
-                                <textarea class="form-control @error('bio') is-invalid @enderror" 
-                                          id="bio" name="bio" rows="4" maxlength="1000" 
+                                <textarea class="form-control @error('bio') is-invalid @enderror"
+                                          id="bio" name="bio" rows="4" maxlength="1000"
                                           placeholder="Ceritakan tentang diri Anda...">{{ old('bio', $user->bio) }}</textarea>
                                 <div class="form-text">Maksimal 1000 karakter</div>
                                 @error('bio')
@@ -106,7 +106,7 @@
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="skills" class="form-label">Keahlian (pisahkan dengan koma)</label>
-                                <input type="text" class="form-control" id="skills" name="skills" 
+                                <input type="text" class="form-control" id="skills" name="skills"
                                        value="{{ old('skills', $user->skills ? implode(', ', $user->skills) : '') }}"
                                        placeholder="Contoh: PHP, Laravel, JavaScript, MySQL">
                                 <div class="form-text">Pisahkan setiap keahlian dengan koma</div>
@@ -120,25 +120,25 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="facebook" class="form-label">Facebook</label>
-                                <input type="url" class="form-control" id="facebook" name="facebook" 
+                                <input type="url" class="form-control" id="facebook" name="facebook"
                                        value="{{ old('facebook', $user->social_links['facebook'] ?? '') }}"
                                        placeholder="https://facebook.com/username">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="twitter" class="form-label">Twitter</label>
-                                <input type="url" class="form-control" id="twitter" name="twitter" 
+                                <input type="url" class="form-control" id="twitter" name="twitter"
                                        value="{{ old('twitter', $user->social_links['twitter'] ?? '') }}"
                                        placeholder="https://twitter.com/username">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="instagram" class="form-label">Instagram</label>
-                                <input type="url" class="form-control" id="instagram" name="instagram" 
+                                <input type="url" class="form-control" id="instagram" name="instagram"
                                        value="{{ old('instagram', $user->social_links['instagram'] ?? '') }}"
                                        placeholder="https://instagram.com/username">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="linkedin" class="form-label">LinkedIn</label>
-                                <input type="url" class="form-control" id="linkedin" name="linkedin" 
+                                <input type="url" class="form-control" id="linkedin" name="linkedin"
                                        value="{{ old('linkedin', $user->social_links['linkedin'] ?? '') }}"
                                        placeholder="https://linkedin.com/in/username">
                             </div>
@@ -152,7 +152,7 @@
                                     <i class="bi bi-info-circle me-2"></i>
                                     Untuk mengubah password, Anda akan menerima kode verifikasi melalui email.
                                 </div>
-                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <a href="{{ route('profile.password.edit') }}" class="btn btn-warning">
                                     <i class="bi bi-key me-2"></i>Ubah Password
                                 </a>
                             </div>
@@ -191,7 +191,7 @@
                             @error('rate_limit'){{ $message }}@enderror
                         </div>
                     @endif
-                    
+
                     <div class="mb-3">
                         <label for="modal_current_password" class="form-label">Password Saat Ini *</label>
                         <input type="password" class="form-control" id="modal_current_password" name="current_password" required>
@@ -247,30 +247,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('modal_password');
     const strengthBar = document.getElementById('password-strength-bar');
     const strengthText = document.getElementById('password-strength-text');
-    
+
     if (passwordInput) {
         passwordInput.addEventListener('input', function() {
             const password = this.value;
             let strength = 0;
             let feedback = [];
-            
+
             if (password.length >= 8) strength += 20;
             else feedback.push('Minimal 8 karakter');
-            
+
             if (/[a-z]/.test(password)) strength += 20;
             else feedback.push('Huruf kecil');
-            
+
             if (/[A-Z]/.test(password)) strength += 20;
             else feedback.push('Huruf besar');
-            
+
             if (/\d/.test(password)) strength += 20;
             else feedback.push('Angka');
-            
+
             if (/[@$!%*?&]/.test(password)) strength += 20;
             else feedback.push('Simbol');
-            
+
             strengthBar.style.width = strength + '%';
-            
+
             if (strength < 40) {
                 strengthBar.className = 'progress-bar bg-danger';
                 strengthText.textContent = 'Lemah - Perlu: ' + feedback.join(', ');
