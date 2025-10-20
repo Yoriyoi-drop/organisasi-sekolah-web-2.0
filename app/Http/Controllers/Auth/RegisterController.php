@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -36,7 +37,10 @@ class RegisterController extends Controller
             'nis' => $data['nis'],
         ]);
 
-        Auth::login($user);
-        return redirect()->route('beranda');
+        // Optional: fire registered event if other listeners depend on it (no email verification)
+        event(new Registered($user));
+
+        // Redirect to login (verification disabled)
+        return redirect()->route('login')->with('status', 'Pendaftaran berhasil. Silakan login.');
     }
 }

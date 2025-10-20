@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
 {
@@ -29,43 +30,37 @@ class RegistrationController extends Controller
             'status' => 'required|in:pending,approved,rejected'
         ]);
 
-        $registration->update(['status' => $request->status]);
+        DB::transaction(function () use ($request, $registration) {
+            $registration->update(['status' => $request->status]);
 
-        if ($request->status === 'approved') {
-            // Create or find student based on unique identifiers (prefer email, fallback to NIS)
-            $student = null;
+            if ($request->status === 'approved') {
+                // Resolve student record robustly
+                $student = null;
 
-            if (!empty($registration->email)) {
-                $student = Student::firstOrCreate(
-                    ['email' => $registration->email],
-                    [
+                if (!empty($registration->email)) {
+                    $student = Student::where('email', $registration->email)->first();
+                }
+
+                if (!$student) {
+                    $student = Student::where('name', $registration->name)
+                        ->where('phone', $registration->phone)
+                        ->first();
+                }
+
+                if (!$student) {
+                    $student = Student::create([
                         'name' => $registration->name,
+                        'email' => $registration->email,
                         'phone' => $registration->phone,
                         'class' => $registration->class,
                         'address' => $registration->address,
-                    ]
-                );
-            }
+                    ]);
+                }
 
-            if (!$student && !empty($registration->nis)) {
-                // If email is missing, try to find by name+nis combination
-                $student = Student::firstOrCreate(
-                    ['name' => $registration->name, 'phone' => $registration->phone],
-                    [
-                        'email' => $registration->email,
-                        'class' => $registration->class,
-                        'address' => $registration->address,
-                    ]
-                );
-            }
-
-            if ($student) {
                 // Attach to organization as member (many-to-many)
-                $registration->organization
-                    ->students()
-                    ->syncWithoutDetaching([$student->id]);
+                $registration->organization->students()->syncWithoutDetaching([$student->id]);
             }
-        }
+        });
 
         return redirect()->route('admin.registrations.index')
                         ->with('success', 'Status pendaftaran berhasil diperbarui.');

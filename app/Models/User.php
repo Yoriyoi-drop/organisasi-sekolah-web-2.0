@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Services\SecurityService;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -113,6 +112,37 @@ class User extends Authenticatable
         return $value ? SecurityService::decryptSensitiveField($value) : null;
     }
 
+    // NIK encrypted
+    public function setNikAttribute($value): void
+    {
+        $this->attributes['nik'] = $value ? SecurityService::encryptSensitiveField($value) : null;
+        $this->attributes['nik_hash'] = $value ? hash('sha256', self::normalizeId($value)) : null;
+    }
+
+    public function getNikAttribute($value): ?string
+    {
+        return $value ? SecurityService::decryptSensitiveField($value) : null;
+    }
+
+    // NIS encrypted
+    public function setNisAttribute($value): void
+    {
+        $this->attributes['nis'] = $value ? SecurityService::encryptSensitiveField($value) : null;
+        $this->attributes['nis_hash'] = $value ? hash('sha256', self::normalizeId($value)) : null;
+    }
+
+    public function getNisAttribute($value): ?string
+    {
+        return $value ? SecurityService::decryptSensitiveField($value) : null;
+    }
+
+    private static function normalizeId(?string $value): string
+    {
+        if (!$value) return '';
+        $value = trim($value);
+        return preg_replace('/[^A-Za-z0-9]/', '', $value);
+    }
+
     public function securityLogs()
     {
         return $this->hasMany(SecurityLog::class);
@@ -148,4 +178,5 @@ class User extends Authenticatable
             'failed_login_attempts' => 0
         ]);
     }
+
 }

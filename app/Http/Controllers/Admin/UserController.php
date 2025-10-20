@@ -6,6 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use App\Rules\EmailDomainAllowed;
+use App\Rules\NikFormat;
+use App\Rules\NisFormat;
 
 class UserController extends Controller
 {
@@ -26,18 +30,38 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email:rfc,dns|ends_with:gmail.com|max:255|unique:users,email',
+            'email' => ['required','string','email:rfc,dns','max:255','unique:users,email', new EmailDomainAllowed()],
             'password' => 'required|string|min:6|confirmed',
         ];
 
         if (Schema::hasColumn('users', 'nik')) {
-            $rules['nik'] = 'required|string|digits_between:8,20|unique:users,nik';
+            $rules['nik'] = ['required','string', new NikFormat()];
         }
         if (Schema::hasColumn('users', 'nis')) {
-            $rules['nis'] = 'required|string|digits_between:5,20|unique:users,nis';
+            $rules['nis'] = ['required','string', new NisFormat()];
         }
 
+        // Normalize before validation
+        $request->merge([
+            'nik' => self::normalizeId($request->input('nik')),
+            'nis' => self::normalizeId($request->input('nis')),
+        ]);
+
         $data = $request->validate($rules);
+
+        // Enforce uniqueness via hashes because nik/nis are encrypted at rest
+        if (!empty($data['nik']) && Schema::hasColumn('users', 'nik_hash')) {
+            $nikHash = hash('sha256', $data['nik']);
+            if (DB::table('users')->where('nik_hash', $nikHash)->exists()) {
+                return back()->withErrors(['nik' => 'NIK sudah terdaftar.'])->withInput();
+            }
+        }
+        if (!empty($data['nis']) && Schema::hasColumn('users', 'nis_hash')) {
+            $nisHash = hash('sha256', $data['nis']);
+            if (DB::table('users')->where('nis_hash', $nisHash)->exists()) {
+                return back()->withErrors(['nis' => 'NIS sudah terdaftar.'])->withInput();
+            }
+        }
 
         $payload = [
             'name' => $data['name'],
@@ -51,5 +75,12 @@ class UserController extends Controller
         User::create($payload);
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil dibuat.');
+    }
+
+    private static function normalizeId(?string $value): string
+    {
+        if (!$value) return '';
+        $value = trim($value);
+        return preg_replace('/[^A-Za-z0-9]/', '', $value);
     }
 }

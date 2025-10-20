@@ -112,4 +112,7 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    // Allowed email domains for registration/admin user creation
+    'allowed_domains' => explode(',', env('ALLOWED_EMAIL_DOMAINS', 'gmail.com,yahoo.com,outlook.com')),
+
 ];
