@@ -1,7 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-
+use Illuminate\Http\Request;
+use App\Models\Contact;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
@@ -38,6 +39,15 @@ class ContactController extends Controller
             'message.required' => 'Pesan wajib diisi.',
             'message.min' => 'Pesan minimal 10 karakter.',
             'message.max' => 'Pesan maksimal 1000 karakter.',
+        ]);
+
+        // Save to DB
+        Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'subject' => $validated['subject'] ?? null,
+            'message' => $validated['message'],
+            'is_read' => false,
         ]);
 
         RateLimiter::hit($key, 300); // 5 minutes
