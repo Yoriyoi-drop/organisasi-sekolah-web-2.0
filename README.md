@@ -26,7 +26,7 @@ Modern responsive website built with Laravel & Bootstrap 5
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/username/madrasah-nusantara
+git clone https://github.com/Yoriyoi-drop/organisasi-sekolah-web-2.o.git
 cd madrasah-nusantara
 composer install
 cp .env.example .env
