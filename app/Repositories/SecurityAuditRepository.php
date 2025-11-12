@@ -11,18 +11,18 @@ use Carbon\Carbon;
 class SecurityAuditRepository
 {
     /**
-     * Tag name for response cache entries.
+     * Nama tag untuk entri cache respons.
      */
     const CACHE_TAG = 'security-audit';
 
     public function __construct()
     {
-        // Set the cache tag in the Spatie ResponseCache config
+        // Tetapkan tag cache dalam konfigurasi Spatie ResponseCache
         config(['responsecache.cache_tag' => self::CACHE_TAG]);
     }
 
     /**
-     * Get paginated security logs with filters
+     * Dapatkan log keamanan yang dipaginasi dengan filter
      */
     public function getPaginatedLogs(array $filters = []): LengthAwarePaginator
     {
@@ -34,7 +34,7 @@ class SecurityAuditRepository
                 $query->where('ip_address', 'like', "%{$filters['ip_address']}%");
             })
             ->when(isset($filters['status']), function (Builder $query) use ($filters) {
-                // status is stored inside the JSON 'data' column
+                // status disimpan di dalam kolom JSON 'data'
                 $query->whereJsonContains('data', ['status' => $filters['status']]);
             })
             ->when(isset($filters['action']), function (Builder $query) use ($filters) {
@@ -55,7 +55,7 @@ class SecurityAuditRepository
     }
 
     /**
-     * Get summary statistics for the security dashboard
+     * Dapatkan statistik ringkasan untuk dashboard keamanan
      */
     public function getSummaryStats(): array
     {
@@ -63,7 +63,7 @@ class SecurityAuditRepository
 
         return [
             'total_otp_attempts' => SecurityLog::where('action', 'like', 'otp%')->count(),
-            // Count failed otp verifications but exclude explicitly high risk events
+            // Hitung verifikasi otp yang gagal tetapi kecualikan acara berisiko tinggi secara eksplisit
             'failed_verifications' => SecurityLog::where('action', 'otp_verify')
                 ->whereJsonContains('data', ['status' => 'error'])
                 ->where('risk_level', '<>', 'high')
@@ -77,7 +77,7 @@ class SecurityAuditRepository
     }
 
     /**
-     * Get a list of unique event types for filtering
+     * Dapatkan daftar jenis acara unik untuk penyaringan
      */
     public function getEventTypes(): array
     {
@@ -88,7 +88,7 @@ class SecurityAuditRepository
     }
 
     /**
-     * Get most recent high-risk events
+     * Dapatkan acara berisiko tinggi terbaru
      */
     public function getRecentHighRiskEvents(int $limit = 5): array
     {

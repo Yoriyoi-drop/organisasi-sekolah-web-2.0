@@ -73,27 +73,27 @@ class User extends Authenticatable
         'nis_hash'
     ];
 
-    // Role & permission handling is provided by Spatie\Permission via HasRoles trait.
-    // The package exposes methods such as assignRole, hasRole, givePermissionTo, can, etc.
+    // Penanganan role & izin disediakan oleh Spatie\Permission melalui trait HasRoles.
+    // Paket ini menyediakan metode seperti assignRole, hasRole, givePermissionTo, can, dll.
 
     /**
-     * Check user role using primarily Spatie permissions, with legacy fallback.
+     * Periksa role pengguna menggunakan izin Spatie terlebih dahulu, dengan fallback legacy.
      */
     public function hasRole(string $role): bool
     {
         try {
-            // First check using Spatie's native method
+            // Pertama periksa menggunakan metode asli Spatie
             if ($this->hasDirectRole($role)) {
                 return true;
             }
             
-            // Check using Spatie role name or slug
+            // Periksa menggunakan nama atau slug role Spatie
             $spatieRole = \Spatie\Permission\Models\Role::where('name', $role)->orWhere('slug', $role)->first();
             if ($spatieRole && $this->roleHasDirectPermission($spatieRole->id)) {
                 return true;
             }
             
-            // Legacy fallback: check legacy role_user -> roles.slug
+            // Fallback legacy: periksa legacy role_user -> roles.slug
             $legacy = \Illuminate\Support\Facades\DB::table('role_user')
                 ->join('roles', 'role_user.role_id', '=', 'roles.id')
                 ->where('role_user.user_id', $this->id)
@@ -108,7 +108,7 @@ class User extends Authenticatable
     }
     
     /**
-     * Check if user has a specific role ID using Spatie pivot table.
+     * Periksa apakah pengguna memiliki ID role tertentu menggunakan tabel pivot Spatie.
      */
     private function roleHasDirectPermission(int $roleId): bool
     {
@@ -125,23 +125,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Check user ability using primarily Spatie permissions, with legacy fallback.
+     * Periksa kemampuan pengguna menggunakan izin Spatie terlebih dahulu, dengan fallback legacy.
      */
     public function hasAbility(string $ability): bool
     {
         try {
-            // First check using Spatie's native can method
+            // Pertama periksa menggunakan metode can asli Spatie
             if ($this->can($ability)) {
                 return true;
             }
             
-            // Check using Spatie permissions table
+            // Periksa menggunakan tabel izin Spatie
             $permission = \Spatie\Permission\Models\Permission::where('name', $ability)->first();
             if ($permission && $this->permissionHasDirectPermission($permission->id)) {
                 return true;
             }
             
-            // Legacy fallback: abilities.slug -> ability_role -> role_user
+            // Fallback legacy: abilities.slug -> ability_role -> role_user
             $abilityRow = \Illuminate\Support\Facades\DB::table('abilities')->where('slug', $ability)->first();
             if ($abilityRow) {
                 $roleIdsLegacy = \Illuminate\Support\Facades\DB::table('role_user')->where('user_id', $this->id)->pluck('role_id')->toArray();
@@ -169,7 +169,7 @@ class User extends Authenticatable
     }
     
     /**
-     * Check if user has a specific permission ID using Spatie pivot tables.
+     * Periksa apakah pengguna memiliki ID izin tertentu menggunakan tabel pivot Spatie.
      */
     private function permissionHasDirectPermission(int $permissionId): bool
     {
@@ -310,11 +310,11 @@ class User extends Authenticatable
     }
     
     /**
-     * Synchronize roles between legacy and Spatie systems.
+     * Sinkronkan role antara sistem legacy dan Spatie.
      */
     public function syncLegacyRolesToSpatie(): void
     {
-        // Get legacy roles
+        // Dapatkan role legacy
         $legacyRoleIds = \Illuminate\Support\Facades\DB::table('role_user')
             ->where('user_id', $this->id)
             ->pluck('role_id')
@@ -324,13 +324,13 @@ class User extends Authenticatable
             return;
         }
         
-        // Get role names from legacy IDs
+        // Dapatkan nama role dari ID legacy
         $legacyRoleNames = \Illuminate\Support\Facades\DB::table('roles')
             ->whereIn('id', $legacyRoleIds)
             ->pluck('name')
             ->toArray();
         
-        // Assign roles via Spatie
+        // Tetapkan role melalui Spatie
         try {
             $this->syncRoles($legacyRoleNames);
         } catch (\Exception $e) {
@@ -367,17 +367,17 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {
-            // Check if the file exists in storage
+            // Periksa apakah file ada di penyimpanan
             if (\Storage::disk('public')->exists($this->avatar)) {
                 return \Storage::url($this->avatar);
             } else {
-                // File doesn't exist in storage, might be a database inconsistency
-                // Update the database to remove the reference
+                // File tidak ada di penyimpanan, mungkin ada ketidakkonsistenan database
+                // Perbarui database untuk menghapus referensi
                 $this->update(['avatar' => null]);
             }
         }
         
-        // Fallback to a default avatar
+        // Fallback ke avatar default
         return asset('images/default-avatar.svg');
     }
 

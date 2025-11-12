@@ -48,7 +48,7 @@ class OtpController extends Controller
             return back()->withErrors(['code' => 'Account is locked. Please try again later.']);
         }
 
-        // Check rate limiting before processing input (lock when attempts reach limit)
+        // Periksa pembatasan laju sebelum memproses input (kunci saat percobaan mencapai batas)
         if (RateLimiter::attempts($key) >= $maxAttempts) {
             $user->lockAccount(30);
             // Log explicit account_locked action expected by tests
@@ -61,7 +61,7 @@ class OtpController extends Controller
             return back()->withErrors(['code' => 'Too many attempts. Try again later.']);
         }
 
-        // Validate input manually so we can count invalid submissions as attempts
+        // Validasi input secara manual agar kami bisa menghitung pengiriman tidak valid sebagai percobaan
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'code' => 'required|string|size:6'
         ]);

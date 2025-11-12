@@ -60,7 +60,7 @@ class Post extends Model
         parent::boot();
 
         static::saved(function () {
-            // Clear the response cache when a post is updated
+            // Hapus cache respons ketika pos diperbarui
             ResponseCache::forget('/');
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/blog');

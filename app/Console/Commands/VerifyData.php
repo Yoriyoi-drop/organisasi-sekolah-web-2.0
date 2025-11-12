@@ -18,14 +18,14 @@ class VerifyData extends Command
     {
         $this->info('Verifying seeded data...');
 
-        // Check PPDB
+        // Periksa PPDB
         $this->info("\nPPDB Applications:");
         $ppdb = PPDB::all();
         foreach ($ppdb as $application) {
             $this->line("- {$application->name} ({$application->status})");
         }
 
-        // Check Contacts
+        // Periksa Kontak
         $this->info("\nContacts:");
         $contacts = Contact::all();
         foreach ($contacts as $contact) {
@@ -33,21 +33,21 @@ class VerifyData extends Command
             $this->line("- {$contact->name}: {$contact->subject} ({$readStatus})");
         }
 
-        // Check Students
+        // Periksa Siswa
         $this->info("\nStudents by Class:");
         $students = Student::all();
         foreach ($students as $student) {
             $this->line("- {$student->name} - Class: {$student->class}");
         }
 
-        // Check Teachers
+        // Periksa Guru
         $this->info("\nTeachers by Subject:");
         $teachers = Teacher::all();
         foreach ($teachers as $teacher) {
             $this->line("- {$teacher->name} - Subject: {$teacher->subject}");
         }
 
-        // Check Activities
+        // Periksa Kegiatan
         $this->info("\nUpcoming Activities:");
         $activities = Activity::where('status', 'upcoming')->get();
         foreach ($activities as $activity) {

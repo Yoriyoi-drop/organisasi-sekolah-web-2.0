@@ -48,7 +48,7 @@ class Facility extends Model
         parent::boot();
 
         static::saved(function () {
-            // Clear the response cache when a facility is updated
+            // Hapus cache respons ketika fasilitas diperbarui
             ResponseCache::forget('/');
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/fasilitas');

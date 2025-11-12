@@ -50,7 +50,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Security validation (with error handling)
+        // Validasi keamanan (dengan penanganan error)
         try {
             if (class_exists('App\Services\SecurityService')) {
                 if (!SecurityService::validateSecureSession()) {
@@ -97,7 +97,7 @@ class ProfileController extends Controller
                 return back()->withErrors(['current_password' => 'Password saat ini tidak benar.']);
             }
 
-            // Check password strength
+            // Periksa kekuatan sandi
             if (class_exists('App\Services\SecurityService') && !SecurityService::isStrongPassword($request->password)) {
                 return back()->withErrors(['password' => 'Password harus mengandung huruf besar, kecil, angka, dan simbol.']);
             }
@@ -105,10 +105,10 @@ class ProfileController extends Controller
             // Generate verification code
             $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-            // Delete old codes
+            // Hapus kode lama
             PasswordVerificationCode::where('user_id', $user->id)->where('used', false)->delete();
 
-            // Create new code
+            // Buat kode baru
             PasswordVerificationCode::create([
                 'user_id' => $user->id,
                 'code' => $code,
@@ -358,7 +358,7 @@ class ProfileController extends Controller
             ]);
 
             if ($request->channel === 'email') {
-                // Validate email matches current user
+                // Validasi email cocok dengan pengguna saat ini
                 if (strcasecmp($request->email, $user->email) !== 0) {
                     return response()->json(['message' => 'Email tidak sesuai dengan akun yang sedang login.'], 422);
                 }

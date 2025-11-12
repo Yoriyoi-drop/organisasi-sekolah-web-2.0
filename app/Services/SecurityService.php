@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class SecurityService
 {
-    // Security action constants
+    // Konstanta aksi keamanan
     public const ACTION_LOGIN = 'login';
     public const ACTION_LOGOUT = 'logout';
     public const ACTION_REGISTER = 'register';
@@ -23,7 +23,7 @@ class SecurityService
     public const ACTION_ACCOUNT_LOCKED = 'account_locked';
     public const ACTION_ACCOUNT_UNLOCKED = 'account_unlocked';
 
-    // Risk level constants
+    // Konstanta tingkat risiko
     public const RISK_LOW = 'low';
     public const RISK_MEDIUM = 'medium';
     public const RISK_HIGH = 'high';
@@ -40,8 +40,8 @@ class SecurityService
                 'risk_level' => $riskLevel,
             ]);
         } catch (\Exception $e) {
-            // Log error but don't disrupt user flow
-            \Log::warning('Security log failed: ' . $e->getMessage());
+            // Log error tetapi jangan ganggu alur pengguna
+            \Log::warning('Log keamanan gagal: ' . $e->getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ class SecurityService
         $lastActivity = session('last_security_check', 0);
         $currentTime = time();
 
-        if ($currentTime - $lastActivity > 1800) { // 30 minutes
+        if ($currentTime - $lastActivity > 1800) { // 30 menit
             session(['last_security_check' => $currentTime]);
             return false;
         }
@@ -142,7 +142,7 @@ class SecurityService
         $user = Auth::user();
         $currentIp = $request->ip();
 
-        // Check for IP changes
+        // Periksa perubahan IP
         $lastLog = SecurityLog::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->first();

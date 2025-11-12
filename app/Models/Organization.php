@@ -57,7 +57,7 @@ class Organization extends Model
         parent::boot();
 
         static::saved(function () {
-            // Clear the response cache when an organization is updated
+            // Hapus cache respons ketika organisasi diperbarui
             ResponseCache::forget('/');
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/organisasi');

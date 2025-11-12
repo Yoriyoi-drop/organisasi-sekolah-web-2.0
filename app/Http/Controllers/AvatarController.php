@@ -22,12 +22,12 @@ class AvatarController extends Controller
 
         $user = Auth::user();
         
-        // Delete old avatar
+        // Hapus avatar lama
         if ($user->avatar) {
             Storage::disk('public')->delete($user->avatar);
         }
 
-        // Store new avatar
+        // Simpan avatar baru
         try {
             $path = $request->file('avatar')->store('avatars', 'public');
             
