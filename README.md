@@ -30,6 +30,15 @@ Modern responsive website built with Laravel & Bootstrap 5
 - Node.js (optional, for asset compilation)
 - Database (SQLite, MySQL, PostgreSQL)
 
+### Development Quality Tools
+
+The project includes several quality assurance tools:
+
+- **PHPStan** (Level 5) - Static analysis for finding bugs and inconsistencies
+- **PHP_CodeSniffer** - Ensures code follows PSR-12 standards
+- **PHP-CS-Fixer** - Automatically fixes coding standards issues
+- **CI Workflow** - Automated testing and code quality checks
+
 ### Linux Installation
 
 ```bash
