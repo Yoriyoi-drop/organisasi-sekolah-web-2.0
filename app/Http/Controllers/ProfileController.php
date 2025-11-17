@@ -94,7 +94,7 @@ class ProfileController extends Controller
                 if (class_exists('App\Services\SecurityService')) {
                     SecurityService::logActivity('password_change_failed_auth', [], 'high');
                 }
-                return back()->withErrors(['current_password' => 'Password saat ini tidak benar.']);
+                return back()->withErrors(['current_password' => 'Password tidak valid.']);
             }
 
             // Periksa kekuatan sandi
@@ -318,7 +318,7 @@ class ProfileController extends Controller
         }
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Password saat ini tidak benar.'])->withInput();
+            return back()->withErrors(['current_password' => 'Password tidak valid.'])->withInput();
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);

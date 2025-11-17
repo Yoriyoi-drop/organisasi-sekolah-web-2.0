@@ -19,7 +19,7 @@ class TwoFactorController extends Controller
     {
         $user = Auth::user();
         $google2fa = new Google2FA();
-        
+
         if (!$user->two_factor_secret) {
             $user->two_factor_secret = $google2fa->generateSecretKey();
             $user->save();
@@ -88,7 +88,7 @@ class TwoFactorController extends Controller
         ]);
 
         if (!Hash::check($request->password, Auth::user()->password)) {
-            return back()->withErrors(['password' => 'Password salah.']);
+            return back()->withErrors(['password' => 'Password tidak valid.']);
         }
 
         Auth::user()->update([
@@ -104,7 +104,7 @@ class TwoFactorController extends Controller
     {
         $codes = [];
         for ($i = 0; $i < 8; $i++) {
-            $codes[] = strtoupper(substr(md5(random_bytes(16)), 0, 8));
+            $codes[] = strtoupper(substr(hash('sha256', random_bytes(16)), 0, 8));
         }
         return $codes;
     }

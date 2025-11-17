@@ -14,11 +14,11 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@manu.com'],
             [
                 'name' => 'Administrator',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD', 'admin123')),
                 'is_admin' => true,
             ]
         );
 
-      
+
     }
 }
